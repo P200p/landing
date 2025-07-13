@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Discord Embed Post Preview</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #2f3136;
+        color: white;
+        padding: 2rem;
+      }
+      .card {
+        background: #36393f;
+        border-left: 5px solid #ff66cc;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 6px;
+      }
+      .title {
+        font-weight: bold;
+        color: #00b0f4;
+        font-size: 1.1rem;
+      }
+      .desc {
+        margin-top: 0.3rem;
+        color: #dcddde;
+      }
+      .image-preview {
+        width: 100%;
+        max-width: 400px;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+      }
+      .container {
+        max-width: 700px;
+        margin: auto;
+      }
+      textarea,
+      input {
+        background: #202225;
+        border: none;
+        color: white;
+        padding: 0.5rem;
+        width: 100%;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+      }
+      label {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-bottom: 0.2rem;
+        display: block;
+      }
+      button {
+        background: #7289da;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 0.5rem;
+      }
+      .embed-preview-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <label>📌 หัวข้อ</label>
+      <input id="title" value="💋 @OmgNhoy - โพสต์ใหม่จ้า~" />
+
+      <label>💬 ข้อความ</label>
+      <textarea id="desc">เลขารวบรวมหลุมความจึ้งมาให้แล้วค่าพรี่~</textarea>
+
+      <label>🖼 ลิงก์รูป (optional)</label>
+      <input id="image" placeholder="https://..." />
+
+      <label>🔗 ลิงก์ปลายทาง</label>
+      <input id="url" value="https://twitter.com/OmgNhoy" />
+
+      <label>🎯 Webhook URL</label>
+      <input id="webhook" placeholder="https://discord.com/api/webhooks/..." />
+
+      <button onclick="preview()">✨ ดูพรีวิว</button>
+      <button onclick="addEmbed()">➕ เพิ่ม Embed</button>
+      <button onclick="sendWebhook()">🚀 โพสต์ไป Discord</button>
+
+      <div class="embed-preview-container" id="embeds">
+        <!-- Embed previews will be injected here -->
+      </div>
+    </div>
+
+    <script>
+      let embedData = [];
+
+      function preview() {
+        embedData = [];
+        document.getElementById("embeds").innerHTML = "";
+        addEmbed();
+      }
+
+      function addEmbed() {
+        const title = document.getElementById("title").value;
+        const desc = document.getElementById("desc").value;
+        const img = document.getElementById("image").value;
+        const url = document.getElementById("url").value;
+
+        const embed = { title, description: desc, url, color: 16711935 };
+        if (img) embed.image = { url: img };
+        embedData.push(embed);
+
+        const container = document.getElementById("embeds");
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `<a href="${url}" class="title" target="_blank">${title}</a>
+                       <div class="desc">${desc}</div>`;
+        if (img) div.innerHTML += `<img src="${img}" class="image-preview">`;
+        container.appendChild(div);
+      }
+
+      function sendWebhook() {
+        const webhook = document.getElementById("webhook").value;
+        const payload = {
+          username: "เลขาขี้อ้อน 💦",
+          avatar_url: "https://i.imgur.com/dZl8D1r.png",
+          embeds: embedData,
+        };
+
+        fetch(webhook, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }).then((r) => alert(r.ok ? "✅ ส่งเรียบร้อย!" : "❌ ผิดพลาด"));
+      }
+    </script>
+  </body>
+</html>
