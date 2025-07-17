@@ -1,3 +1,24 @@
+# --- Start of Ping Server (for Railway) ---
+from flask import Flask
+import threading
+import os
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is alive!"
+
+def run():
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
+
+def keep_alive():
+    t = threading.Thread(target=run)
+    t.start()
+
+keep_alive()
+# --- End of Ping Server ---
 # bot.py
 
 import discord
@@ -42,18 +63,18 @@ def together_chat(messages):
         response = requests.post(url, json=data, headers=headers, timeout=30)
         response.raise_for_status()
         result = response.json()
-        
+
         if "error" in result:
             print(f"Together AI API error: {result['error']}")
             return None
-        
+
         if "choices" in result and len(result["choices"]) > 0:
             message = result["choices"][0]["message"]["content"]
             return message.strip()
-        
+
         print(f"Unexpected API response: {result}")
         return None
-        
+
     except requests.exceptions.RequestException as e:
         print(f"Request error: {e}")
         return None
@@ -69,7 +90,7 @@ intents.reactions = True
 class Bot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="/", intents=intents)
-        
+
     async def setup_hook(self):
         await self.tree.sync()
 
@@ -90,12 +111,13 @@ async def on_ready():
         bot.loop.create_task(check_high_interest())
     except Exception as e:
         print(e)
-    
+
 # Calculate interest (10% per hour)
 def calculate_interest(loan):
     if loan['status'] != 'pending':
         return 0
     try:
+
         # ใช้ datetime.fromisoformat โดยตรงกับ string ที่ได้จาก Supabase
         created_at_str = str(loan['created_at'])
         if '.' in created_at_str:
