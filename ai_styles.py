@@ -30,5 +30,7 @@
 +     response = together.chat(messages=[
 +         {"role": "system", "content": sys_prompt},
 +         {"role": "user", "content": message}
-+     ])
-+     await ctx.send(response["choices"][0]["message"]["content"])
++     ],
+    temperature=0.2,  # ค่าต่ำจะนิ่งขึ้น
+    top_p=0.5
+)
